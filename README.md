@@ -50,8 +50,8 @@ std::vector<HTMLElement*> HTMLElement::GetElementsByTagName(const std::wstring& 
 ```
 
 ## contributors
-* [cactoes](@cactoes)
-* [MeloenCoding](@MeloenCoding)
+* [@cactoes](https://www.github.com/cactoes)
+* [@MeloenCoding](https://www.github.com/MeloenCoding)
 
 ## license
 [MIT](LICENSE)
