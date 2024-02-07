@@ -14,7 +14,7 @@
 namespace parser {
     class HTMLElement {
     public:
-        HTMLElement(const std::wstring& tag);
+        HTMLElement(const std::wstring& _tag) : tag(_tag) {};
 
         std::optional<HTMLElement*> GetElementById(const std::wstring& idName);
         std::vector<HTMLElement*> GetElementsByClassName(const std::wstring& className);

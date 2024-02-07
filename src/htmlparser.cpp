@@ -217,10 +217,6 @@ parser::HTMLElement parser::ParseHTML(const std::wstring& htmlString) {
     return document;
 }
 
-parser::HTMLElement::HTMLElement(const std::wstring& tag) {
-    this->tag = tag;
-}
-
 std::vector<parser::HTMLElement*> RecursiveGetElementsByClassName(parser::HTMLElement* element, const std::wstring& className) {
     std::vector<parser::HTMLElement*> elements;
 
