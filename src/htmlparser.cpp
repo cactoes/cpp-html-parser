@@ -207,6 +207,8 @@ parser::HTMLElement parser::ParseHTML(const std::wstring& htmlString) {
                 newElement.inner = token;
                 // quick fix to replace &#39; for its actual value
                 ReplaceAll(newElement.inner, L"&#39;", L"'");
+                // quick fix to replace &quot; for its actual value
+                ReplaceAll(newElement.inner, L"&quot;", L"\"");
                 newElement.parent = current;
                 current->children.push_back(newElement);
                 break;
