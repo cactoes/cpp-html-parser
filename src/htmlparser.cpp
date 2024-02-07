@@ -205,6 +205,8 @@ parser::HTMLElement parser::ParseHTML(const std::wstring& htmlString) {
             case TokenType::NO_TAG: {
                 parser::HTMLElement newElement(L"");
                 newElement.inner = token;
+                // quick fix to replace &#39; for its actual value
+                ReplaceAll(newElement.inner, L"&#39;", L"'");
                 newElement.parent = current;
                 current->children.push_back(newElement);
                 break;
