@@ -16,10 +16,10 @@ int main () {
     using namespace parser;
 
     // parse the html wstring
-    HTMLElement document = parseHTML(L"<h1>Hello</h1>");
+    HTMLElement document = ParseHTML(L"<h1>Hello</h1>");
 
     // print the h1 tag
-    std::wcout << document.children.at(0)->tag << "\n";
+    std::wcout << document.children.at(0).tag << "\n";
 
     return 0;
 }
