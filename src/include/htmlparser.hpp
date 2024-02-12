@@ -14,23 +14,23 @@
 namespace parser {
     class HTMLElement {
     public:
-        HTMLElement(const std::wstring& _tag) : tag(_tag) {};
+        HTMLElement(const std::string& _tag) : tag(_tag) {};
 
-        std::optional<HTMLElement*> GetElementById(const std::wstring& idName);
-        std::vector<HTMLElement*> GetElementsByClassName(const std::wstring& className);
-        std::vector<HTMLElement*> GetElementsByTagName(const std::wstring& tagName);
+        std::optional<HTMLElement*> GetElementById(const std::string& idName);
+        std::vector<HTMLElement*> GetElementsByClassName(const std::string& className);
+        std::vector<HTMLElement*> GetElementsByTagName(const std::string& tagName);
 
     public:
-        std::wstring tag;
-        std::wstring inner;
-        std::map<std::wstring, std::wstring> attributes;
+        std::string tag;
+        std::string inner;
+        std::map<std::string, std::string> attributes;
         std::vector<HTMLElement> children;
-        std::vector<std::wstring> classList;
-        std::wstring id;
+        std::vector<std::string> classList;
+        std::string id;
         std::optional<HTMLElement*> parent;
     };
 
-    HTMLElement ParseHTML(const std::wstring& htmlString);
+    HTMLElement ParseHTML(const std::string& htmlString);
 }; // parser
 
 #endif // __HTMLPARSER_HPP__

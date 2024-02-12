@@ -1,5 +1,5 @@
 ## HTML Parser
-A simple html parser written in c++, currenty only supporting unicode
+A simple html parser written in c++
 
 ## including this project
 ```cmake
@@ -16,10 +16,10 @@ int main () {
     using namespace parser;
 
     // parse the html wstring
-    HTMLElement document = ParseHTML(L"<h1>Hello</h1>");
+    HTMLElement document = parseHTML("<h1>Hello</h1>");
 
     // print the h1 tag
-    std::wcout << document.children.at(0).tag << "\n";
+    std::cout << document.children.at(0)->tag << "\n";
 
     return 0;
 }
@@ -29,24 +29,24 @@ int main () {
 ### constructor
 only needs a tagname to create the element
 ```cpp
-HTMLElement::HTMLElement(const std::wstring& tag);
+HTMLElement::HTMLElement(const std::string& tag);
 ```
 ### GetElementById
 returns an optional pointer to the element with the specified id
 ```cpp
-std::optional<HTMLElement*> HTMLElement::GetElementById(const std::wstring& idName);
+std::optional<HTMLElement*> HTMLElement::GetElementById(const std::string& idName);
 ```
 
 ### GetElementsByClassName
 returns a list of element pointers which include the specified class name
 ```cpp
-std::vector<HTMLElement*> HTMLElement::GetElementsByClassName(const std::wstring& className);
+std::vector<HTMLElement*> HTMLElement::GetElementsByClassName(const std::string& className);
 ```
 
 ### GetElementsByTagName
 returns a list of element pointers which include the specified tag name
 ```cpp
-std::vector<HTMLElement*> HTMLElement::GetElementsByTagName(const std::wstring& tagName);
+std::vector<HTMLElement*> HTMLElement::GetElementsByTagName(const std::string& tagName);
 ```
 
 ## contributors
