@@ -59,6 +59,7 @@ bool IsVoidElement(const std::string& token) {
     if (token.starts_with("<track")) return true;
     if (token.starts_with("<wbr")) return true;
     if (token.starts_with("<!")) return true;
+    if (token.ends_with("/>")) return true;
     return false;
 }
 
@@ -198,7 +199,6 @@ parser::HTMLElement parser::ParseHTML(const std::string& htmlString) {
                 break;
             case TokenType::NO_CLOSING: {
                 parser::HTMLElement newElement = ParseAttributes(token);
-                newElement.parent = current;
                 current->children.push_back(newElement);
                 break;
             }
@@ -209,7 +209,6 @@ parser::HTMLElement parser::ParseHTML(const std::string& htmlString) {
                 ReplaceAll(newElement.inner, "&#39;", "'");
                 // quick fix to replace &quot; for its actual value
                 ReplaceAll(newElement.inner, "&quot;", "\"");
-                newElement.parent = current;
                 current->children.push_back(newElement);
                 break;
             }
