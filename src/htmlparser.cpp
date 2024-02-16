@@ -209,6 +209,8 @@ parser::HTMLElement parser::ParseHTML(const std::string& htmlString) {
                 ReplaceAll(newElement.inner, "&#39;", "'");
                 // quick fix to replace &quot; for its actual value
                 ReplaceAll(newElement.inner, "&quot;", "\"");
+                // quick fix to replace &amp; for its actual value
+                ReplaceAll(newElement.inner, "&amp;", "&");
                 current->children.push_back(newElement);
                 break;
             }
