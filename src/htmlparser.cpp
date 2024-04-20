@@ -3,7 +3,7 @@
 // MIT License
 // ====================
 
-#include "include/HTMLParser.hpp"
+#include "include/htmlparser.hpp"
 
 #include <ranges>
 #include <regex>
