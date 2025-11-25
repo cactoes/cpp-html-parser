@@ -52,6 +52,7 @@ std::vector<HTMLElement*> HTMLElement::GetElementsByTagName(const std::string& t
 ## contributors
 * [@cactoes](https://www.github.com/cactoes)
 * [@MeloenCoding](https://www.github.com/MeloenCoding)
+* [@Altair-sh](https://github.com/Altair-sh)
 
 ## license
 [MIT](LICENSE)
