@@ -4,32 +4,27 @@
 // ====================
 
 #include "include/htmlparser.hpp"
-
 #include <ranges>
-#include <regex>
+#include <sstream>
 
 std::vector<std::string> CreateTokenArray(const std::string& htmlString) {
     std::vector<std::string> tokenArray;
-    std::string buffer;
+    size_t token_begin = 0;
+    size_t i = 0;
 
-    for (const auto& character : htmlString) {
-        switch (character) {
-            case '<':
-                if (buffer.empty())
-                    break;
-                tokenArray.push_back(buffer);
-                buffer.clear();
-                break;
-            case '>':
-                buffer += character;
-                tokenArray.push_back(buffer);
-                buffer.clear();
-                continue;
-            default:
-                break;
+    for (char character : htmlString) {
+        if(character == '<') {
+            if (i - token_begin > 0){
+                tokenArray.push_back(htmlString.substr(token_begin, i - token_begin));
+                token_begin = i;
+            }
+        }
+        else if(character == '>') {
+            tokenArray.push_back(htmlString.substr(token_begin, i - token_begin + 1));
+            token_begin = i + 1;
         }
 
-        buffer += character;
+        i++;
     }
 
     return tokenArray; 
@@ -78,42 +73,34 @@ TokenType ParseToTokenType(const std::string& token) {
 
 std::vector<std::string> Split(const std::string& s, const std::string& delimiter) {
     size_t pos_start = 0, pos_end, delim_len = delimiter.length();
-    std::string token;
     std::vector<std::string> res;
 
     while ((pos_end = s.find(delimiter, pos_start)) != std::string::npos) {
-        token = s.substr (pos_start, pos_end - pos_start);
+        res.push_back(s.substr(pos_start, pos_end - pos_start));
         pos_start = pos_end + delim_len;
-        res.push_back (token);
     }
 
-    res.push_back (s.substr(pos_start));
+    res.push_back(s.substr(pos_start));
     return res;
 }
 
-std::vector<std::string> SplitRegex(const std::string& s, const std::regex& sep_regex) {
-    std::sregex_token_iterator iter(s.begin(), s.end(), sep_regex, -1);
-    std::sregex_token_iterator end;
-    return { iter, end };
-}
-
-std::vector<std::string> MatchAllRegex(const std::string& input, const std::regex& pattern) {
-    std::vector<std::string> matches;
-    std::sregex_iterator iter(input.begin(), input.end(), pattern);
-    std::sregex_iterator end;
-
-    while (iter != end) {
-        matches.push_back(iter->str());
-        ++iter;
-    }
-
-    return matches;
-}
-
-void ReplaceAll(std::string& str, const std::string& value, const std::string& replaceValue = "") {
-    size_t pos;
-    while ((pos = str.find(value)) != std::string::npos)
-        str = str.replace(pos, value.size(), replaceValue);
+void ReplaceAll(std::string& str, const std::string& value, const std::string& replacement = ""){
+    size_t sub_begin = str.find(value);
+    if(sub_begin == std::string::npos)
+        return;
+    
+    const size_t value_len = value.size();
+    size_t other_content_begin = 0;
+    std::stringstream ss;
+    do {
+        ss<<std::string_view(str.data() + other_content_begin, sub_begin - other_content_begin); // add content before value
+        ss<<replacement;
+        other_content_begin = sub_begin + value_len;
+        sub_begin = str.find(value, sub_begin + value_len); // find next value
+    } while(sub_begin != std::string::npos);
+    
+    ss<<std::string_view(str.data() + other_content_begin);
+    str = ss.str();
 }
 
 std::pair<std::string, std::string> ParseAttributeValue(const std::string& attrib) {
@@ -143,6 +130,45 @@ std::string GetId(const std::map<std::string, std::string>& attributes) {
     return "";
 }
 
+std::vector<std::string> SplitStrWithBrackets(const std::string& str){
+    std::vector<std::string> parts;
+    bool bracketOpen = false;
+    char bracket = 0;
+    size_t part_begin = 0;
+    size_t i = 0;
+    for(char c : str){
+        if(bracketOpen){
+            if(c == bracket){
+                bracketOpen = false;
+                // push back substring including brackets
+                parts.push_back(str.substr(part_begin, i + 1 - part_begin));
+                part_begin = i+1;
+            }
+        }
+        else switch(c){
+            case '"': case '\'': 
+                bracketOpen = true;
+                bracket = c;
+                break;
+            case ' ': case '\t':
+            case '\r': case '\n':
+                // push back substring before space if it isn't previous space
+                size_t part_length = i - part_begin;
+                if(part_length > 0)
+                    parts.push_back(str.substr(part_begin, part_length));
+                part_begin = i+1;
+                break;
+        }
+        i++;
+    }
+
+    // push back the remaining characters
+    if(part_begin < str.size())
+        parts.push_back(str.substr(part_begin));
+
+    return parts;
+}
+
 parser::HTMLElement ParseAttributes(const std::string& token) {
     std::string tokenCpy = token;
     if (auto pos = tokenCpy.find("</"); pos != std::string::npos)
@@ -156,12 +182,12 @@ parser::HTMLElement ParseAttributes(const std::string& token) {
         tokenCpy = tokenCpy.replace(pos, 1, "");
 
 
+    // regex: [^ ]+=\"[^\"]*\"|[^ ]+
     // https://regex101.com/
     // test strings:
     // 1. !DOCTYPE HTML
     // 2. tagname class="cl1 cl2 cl3-a cl3_b" id="test" asd zzxc d-ata-tag="2"
-    auto attributes = MatchAllRegex(tokenCpy, std::regex{ "[^ ]+=\"[^\"]*\"|[^ ]+" });
-    // auto attributes = Split(tokenCpy, " ");
+    auto attributes = SplitStrWithBrackets(tokenCpy);
 
     parser::HTMLElement newElement("");
 
